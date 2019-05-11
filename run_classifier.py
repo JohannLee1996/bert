@@ -398,6 +398,39 @@ class SIMAHAProcessor(DataProcessor):
                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
        return examples
 
+class SIMAHBProcessor(DataProcessor):
+
+   """Processor for the News data set (GLUE version)."""
+
+   # def __init__(self):
+   #     self.labels = ['T', 'M']
+
+   def get_train_examples(self, data_dir):
+       return self._create_examples(
+           self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+   def get_dev_examples(self, data_dir):
+       return self._create_examples(
+           self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+   def get_test_examples(self, data_dir):
+   	return self._create_examples(
+       	self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
+
+   def get_labels(self):
+       return ['001', '010','100']
+
+   def _create_examples(self, lines, set_type):
+       """Creates examples for the training and dev sets."""
+       examples = []
+       for (i, line) in enumerate(lines):
+           guid = "%s-%s" % (set_type, i)
+           text_a = tokenization.convert_to_unicode(line[1])
+           label = tokenization.convert_to_unicode(line[0])
+           examples.append(
+               InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+       return examples
+
 class ColaProcessor(DataProcessor):
   """Processor for the CoLA data set (GLUE version)."""
 
@@ -855,6 +888,7 @@ def main(_):
       "xnli": XnliProcessor,
       "dmt": DmtProcessor,
       "simah_a": SIMAHAProcessor,
+      "simah_b": SIMAHBProcessor,
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
